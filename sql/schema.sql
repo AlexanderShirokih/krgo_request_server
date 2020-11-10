@@ -1,15 +1,16 @@
-CREATE TABLE IF NOT EXISTS zone
+CREATE TABLE IF NOT EXISTS district
 (
     id   INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(20) NOT NULL
+    name VARCHAR(20) NOT NULL,
+    UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS street
 (
-    id      INT PRIMARY KEY AUTO_INCREMENT,
-    name    VARCHAR(32) NOT NULL,
-    zone_id INT,
-    FOREIGN KEY (zone_id) REFERENCES zone (id)
+    id          INT PRIMARY KEY AUTO_INCREMENT,
+    name        VARCHAR(32) NOT NULL,
+    district_id INT,
+    FOREIGN KEY (district_id) REFERENCES district (id)
 );
 
 CREATE TABLE IF NOT EXISTS counter_types
@@ -134,6 +135,21 @@ CREATE TABLE IF NOT EXISTS work_request_to_request
     PRIMARY KEY (request_id, request_set_id),
     FOREIGN KEY (request_id) REFERENCES request (id),
     FOREIGN KEY (request_set_id) REFERENCES request_set (id)
+);
+
+CREATE TABLE IF NOT EXISTS users
+(
+    username VARCHAR(50) NOT NULL PRIMARY KEY,
+    password VARCHAR(50) NOT NULL,
+    enabled  BOOL        NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS authorities
+(
+    username  VARCHAR(50) NOT NULL,
+    authority VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username),
+    UNIQUE (username, authority)
 );
 
 DELIMITER $$
