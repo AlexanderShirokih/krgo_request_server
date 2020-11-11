@@ -5,9 +5,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.alexandershirokikh.nrgorequestserver.api.AddDistrictRequest;
 import ru.alexandershirokikh.nrgorequestserver.dao.DistrictRepository;
 import ru.alexandershirokikh.nrgorequestserver.entities.District;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -31,8 +34,11 @@ public class DistrictController {
      * Adds a new district to the database
      */
     @PostMapping
-    ResponseEntity<District> addNewDistrict(@RequestBody District district) {
+    ResponseEntity<District> addNewDistrict(@Valid @RequestBody AddDistrictRequest newDistrict) {
         try {
+            var district = new District();
+            district.setName(newDistrict.getName());
+
             return ResponseEntity.ok(districtRepository.save(district));
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.badRequest().build();
@@ -43,7 +49,7 @@ public class DistrictController {
      * Deletes district with given id
      */
     @DeleteMapping("{id}")
-    ResponseEntity<Void> deleteEmployee(@PathVariable Integer id) {
+    ResponseEntity<Void> deleteDistrict(@PathVariable @Min(1) Integer id) {
         try {
             districtRepository.deleteById(id);
             return ResponseEntity.ok().build();
