@@ -1,11 +1,12 @@
 package ru.alexandershirokikh.nrgorequestserver.data.service;
 
-import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestDTO;
+import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
 import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides requests management operations
@@ -25,7 +26,7 @@ public interface RequestService {
     /**
      * Returns list containing all requests
      */
-    List<RequestDTO> getAll();
+    List<Request> getAll();
 
     /**
      * Deletes request with {@code id }
@@ -42,7 +43,7 @@ public interface RequestService {
     /**
      * Returns set of all requests by set id
      */
-    List<RequestDTO> getAllRequestBySetId(Long id);
+    Optional<RequestSet> getAllRequestBySetId(Long id);
 
     /**
      * Adds new request set or updates existing if request set ID if not {@literal null}
@@ -54,4 +55,13 @@ public interface RequestService {
      */
     void moveRequest(Long targetId, List<Long> requests);
 
+    /**
+     * Assigns employee to request set
+     */
+    void assignEmployee(Long requestSetId, Integer employeeId, EmployeeAssignmentType assignmentType);
+
+    /**
+     * Detaches employee from request set
+     */
+    void detachEmployee(Long requestSetId, Integer employeeId);
 }

@@ -2,17 +2,17 @@ package ru.alexandershirokikh.nrgorequestserver.data.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.alexandershirokikh.nrgorequestserver.data.dao.EmployeeAssignmentRepository;
+import ru.alexandershirokikh.nrgorequestserver.data.dao.EmployeeRepository;
 import ru.alexandershirokikh.nrgorequestserver.data.dao.RequestRepository;
 import ru.alexandershirokikh.nrgorequestserver.data.dao.RequestSetRepository;
-import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestDTO;
-import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestSetDTO;
-import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestTypeDTO;
-import ru.alexandershirokikh.nrgorequestserver.models.Request;
-import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
+import ru.alexandershirokikh.nrgorequestserver.data.entities.*;
+import ru.alexandershirokikh.nrgorequestserver.models.*;
 
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -22,8 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
 
+    private final EmployeeAssignmentRepository employeeAssignmentRepository;
     private final RequestSetRepository requestSetRepository;
     private final RequestRepository requestRepository;
+    private final EmployeeRepository employeeRepository;
     private final AccountInfoService accountService;
     private final CountingPointService countingPointService;
 
@@ -47,8 +49,10 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestDTO> getAll() {
-        return requestRepository.findAll();
+    public List<Request> getAll() {
+        return requestRepository.findAll().stream()
+                .map(this::buildRequest)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -59,20 +63,87 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<RequestSet> getAllRequestSets(Date date) {
         if (date == null)
-            return requestSetRepository.findAll().stream().map(this::buildRequestSet).collect(Collectors.toList());
+            return requestSetRepository.findAll().stream().map(this::buildShortRequestSet).collect(Collectors.toList());
         else
-            return requestSetRepository.findAllByDate(date).stream().map(this::buildRequestSet).collect(Collectors.toList());
+            return requestSetRepository.findAllByDate(date).stream().map(this::buildShortRequestSet).collect(Collectors.toList());
     }
 
-    private RequestSet buildRequestSet(RequestSetDTO dto) {
-        return new RequestSet(dto.getId(), dto.getName(), dto.getDate());
+    private RequestSet buildShortRequestSet(RequestSetDTO dto) {
+        return new RequestSet(dto.getId(), dto.getName(), dto.getDate(), null, null);
     }
 
     @Override
-    public List<RequestDTO> getAllRequestBySetId(Long id) {
-        return requestSetRepository.findById(id)
-                .map(RequestSetDTO::getRequests)
-                .orElse(List.of());
+    public Optional<RequestSet> getAllRequestBySetId(Long id) {
+        return requestSetRepository.findById(id).map(this::buildRequestSet);
+    }
+
+    private RequestSet buildRequestSet(RequestSetDTO requestSetDTO) {
+        return new RequestSet(
+                requestSetDTO.getId(),
+                requestSetDTO.getName(),
+                requestSetDTO.getDate(),
+                requestSetDTO.getRequests().stream().map(this::buildRequest)
+                        .collect(Collectors.toList()),
+                requestSetDTO.getAssignments().stream().map(this::buildAssignment)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private EmployeeAssignment buildAssignment(EmployeeAssignmentDTO assignmentDTO) {
+        return new EmployeeAssignment(
+                buildEmployee(assignmentDTO.getEmployee()),
+                assignmentDTO.getAssignmentType()
+        );
+    }
+
+    private Request buildRequest(RequestDTO requestDTO) {
+        return new Request(
+                requestDTO.getId(),
+                requestDTO.getAdditional(),
+                requestDTO.getReason(),
+                requestDTO.getRequestType().getId(),
+                buildAccount(requestDTO.getAccountInfo()),
+                buildCountingPoint(requestDTO.getCountingPointAssignment())
+        );
+    }
+
+    private CountingPoint buildCountingPoint(AccountInfoToCountingPointDTO countingPointAssignment) {
+        if (countingPointAssignment == null)
+            return null;
+        final CountingPointDTO cPoint = countingPointAssignment.getCountingPoint();
+        return new CountingPoint(
+                cPoint.getCounterNumber(),
+                cPoint.getCounterTypeId(),
+                cPoint.getTpName(),
+                cPoint.getFeederNumber(),
+                cPoint.getPillarNumber(),
+                cPoint.getPower(),
+                cPoint.getCheckYear(),
+                cPoint.getCheckQuarter()
+        );
+    }
+
+    private Account buildAccount(AccountInfoDTO accountInfoDTO) {
+        if (accountInfoDTO == null)
+            return null;
+        return new Account(
+                accountInfoDTO.getBaseId(),
+                accountInfoDTO.getName(),
+                accountInfoDTO.getStreet().getId(),
+                accountInfoDTO.getHomeNumber(),
+                accountInfoDTO.getApartmentNumber()
+        );
+    }
+
+    private Employee buildEmployee(EmployeeDTO employeeDTO) {
+        if (employeeDTO == null)
+            return null;
+        return new Employee(
+                employeeDTO.getId(),
+                employeeDTO.getName(),
+                employeeDTO.getAccessGroup(),
+                employeeDTO.getPosition().getId()
+        );
     }
 
     @Override
@@ -93,6 +164,37 @@ public class RequestServiceImpl implements RequestService {
                 .findById(targetId)
                 .ifPresent(requestSetDTO -> requestRepository.findAllById(requests)
                         .forEach(requestDTO -> requestDTO.setRequestSet(requestSetDTO)));
+    }
+
+    @Override
+    public void assignEmployee(Long requestSetId, Integer employeeId, EmployeeAssignmentType assignmentType) {
+        requestSetRepository.findById(requestSetId)
+                .ifPresent(requestSet -> employeeRepository
+                                .findById(employeeId)
+                                .ifPresent(employeeDTO -> {
+                                            var assignment = new EmployeeAssignmentDTO();
+                                            assignment.setEmployee(employeeDTO);
+                                            assignment.setRequestSet(requestSet);
+                                            assignment.setAssignmentType(assignmentType);
+                                            assignment.setAssignmentKey(new EmployeeAssignmentKey(requestSetId, employeeId));
+                                            employeeAssignmentRepository.save(assignment);
+//                                    requestSet.getAssignments().add(assignment);
+//                                    employeeDTO.getAssignments().add(assignment);
+                                        }
+                                )
+                );
+    }
+
+    @Override
+    public void detachEmployee(Long requestSetId, Integer employeeId) {
+        requestSetRepository.findById(requestSetId)
+                .ifPresent(requestSet -> {
+                            requestSet
+                                    .getAssignments()
+                                    .removeIf(assignment -> assignment.getAssignmentKey().getEmployeeId().equals(employeeId));
+                            requestSetRepository.save(requestSet);
+                        }
+                );
     }
 
     private void updateRequest(RequestDTO requestDTO, Request inputRequest) {
@@ -122,7 +224,6 @@ public class RequestServiceImpl implements RequestService {
             requestDTO.setCountingPointAssignment(null);
             requestDTO.setAccountInfo(null);
         }
-
         requestRepository.save(requestDTO);
     }
 

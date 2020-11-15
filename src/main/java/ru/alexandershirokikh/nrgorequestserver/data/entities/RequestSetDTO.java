@@ -1,11 +1,13 @@
 package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,4 +26,8 @@ public class RequestSetDTO {
 
     @OneToMany(mappedBy = "requestSet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RequestDTO> requests;
+
+    @JsonIgnoreProperties("assignments")
+    @OneToMany(mappedBy = "requestSet")
+    private Set<EmployeeAssignmentDTO> assignments;
 }

@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Describes data class request set
@@ -31,4 +32,13 @@ public class RequestSet {
     @NotNull
     private final Date date;
 
+    /**
+     * Associated request. Used only for response
+     */
+    private final List<Request> requests;
+
+    /**
+     * Assigned employees. Used only for response
+     */
+    private final List<EmployeeAssignment> assignedEmployees;
 }

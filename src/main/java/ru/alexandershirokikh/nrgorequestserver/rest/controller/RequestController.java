@@ -3,8 +3,8 @@ package ru.alexandershirokikh.nrgorequestserver.rest.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestDTO;
 import ru.alexandershirokikh.nrgorequestserver.data.service.RequestService;
+import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
 import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -57,7 +58,7 @@ public class RequestController {
      * Gets all requests by set id
      */
     @GetMapping("/{id}")
-    public List<RequestDTO> getAllRequestBySetId(@PathVariable("id") @Positive Long id) {
+    public Optional<RequestSet> getAllRequestBySetId(@PathVariable("id") @Positive Long id) {
         return requestService.getAllRequestBySetId(id);
     }
 
@@ -75,10 +76,30 @@ public class RequestController {
      * @param targetId target request set id
      * @param requests moving request
      */
-    @PostMapping("/{id}/move")
+    @PostMapping("{id}/move")
     public void moveRequest(@PathVariable("id") @Positive Long targetId,
                             @RequestParam("ids[]") List<Long> requests) {
         requestService.moveRequest(targetId, requests);
     }
 
+    /**
+     * Assigns employee to request set
+     */
+    @PostMapping("/{id}/employees/{eid}/{type}")
+    public void attachEmployee(@PathVariable("id") @Positive Long requestSetId,
+                               @PathVariable("eid") @Positive Integer employeeId,
+                               @PathVariable("type") EmployeeAssignmentType assignmentType) {
+        requestService.assignEmployee(requestSetId, employeeId, assignmentType);
+    }
+
+    /**
+     * Detaches employee from request set
+     */
+    @DeleteMapping("/{id}/employees/{eid}")
+    public void detachEmployee(
+            @PathVariable("id") @Positive Long requestSetId,
+            @PathVariable("eid") @Positive Integer employeeId
+    ) {
+        requestService.detachEmployee(requestSetId, employeeId);
+    }
 }

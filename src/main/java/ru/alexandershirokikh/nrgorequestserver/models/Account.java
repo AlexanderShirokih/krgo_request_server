@@ -1,7 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.models;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -11,38 +10,37 @@ import javax.validation.constraints.Size;
 /**
  * Describes API request for adding or updating account info's
  */
-@NoArgsConstructor
 @Data
 public class Account {
     /**
      * Account info ID (account number)
      */
     @NotNull
-    private Integer baseId;
+    private final Integer baseId;
 
     /**
      * Account owner name
      */
     @Size(min = 2, max = 80)
-    private String name;
+    private final String name;
 
     /**
      * User address: street name
      */
     @NotNull
     @Positive
-    private Integer streetId;
+    private final Integer streetId;
 
     /**
      * User address: home number
      */
     @NotEmpty
     @Size(max = 6)
-    private String homeNumber;
+    private final String homeNumber;
 
     /**
      * User address: apartment number
      */
     @Size(max = 6)
-    private String apartmentNumber;
+    private final String apartmentNumber;
 }

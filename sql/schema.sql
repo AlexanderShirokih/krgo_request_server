@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS assignment
 (
     request_set_id INT                              NOT NULL,
     worker_id      INT                              NOT NULL,
-    type           ENUM ('member', 'main', 'chief') NOT NULL,
+    type           ENUM ('MEMBER', 'MAIN', 'CHIEF') NOT NULL,
     PRIMARY KEY (request_set_id, worker_id),
     FOREIGN KEY (request_set_id) REFERENCES request_set (id),
     FOREIGN KEY (worker_id) REFERENCES employee (id)

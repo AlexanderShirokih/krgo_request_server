@@ -1,13 +1,16 @@
 package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @Entity(name = "employee")
+@JsonIgnoreProperties("assignments")
 public class EmployeeDTO {
 
     public enum EmployeeStatus {
@@ -33,4 +36,7 @@ public class EmployeeDTO {
     @Enumerated(EnumType.STRING)
     private EmployeeStatus status = EmployeeStatus.WORKS;
 
+    @JsonIgnoreProperties("assignments")
+    @OneToMany(mappedBy = "employee")
+    private Set<EmployeeAssignmentDTO> assignments;
 }

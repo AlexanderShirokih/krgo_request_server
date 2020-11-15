@@ -11,11 +11,16 @@ import javax.validation.constraints.*;
 public class Employee {
 
     /**
+     * Employee id. Used in responses only.
+     */
+    private final Integer id;
+
+    /**
      * Employee name
      */
     @NotEmpty
     @Size(min = 2, max = 80)
-    private String name;
+    private final String name;
 
     /**
      * Employee accessGroup
@@ -23,13 +28,13 @@ public class Employee {
     @Min(1)
     @Max(5)
     @NotNull
-    private Integer accessGroup;
+    private final Integer accessGroup;
 
     /**
      * Employee position
      */
     @Positive
     @NotNull
-    private Integer positionId;
+    private final Integer positionId;
 
 }
