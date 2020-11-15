@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS request_type
 CREATE TABLE IF NOT EXISTS request
 (
     id                          INT AUTO_INCREMENT,
+    request_set_id              INT         NOT NULL,
     additional                  VARCHAR(80) NOT NULL DEFAULT '',
     reason                      VARCHAR(64) NOT NULL DEFAULT '',
     type_id                     INT(3)      NOT NULL,
@@ -84,6 +85,7 @@ CREATE TABLE IF NOT EXISTS request
     PRIMARY KEY (id),
     FOREIGN KEY (account_id, account_rev) REFERENCES account_info (base_id, revision),
     FOREIGN KEY (counting_point_reference_id) REFERENCES account_info_to_counter_point (id),
+    FOREIGN KEY (request_set_id) REFERENCES request_set (id) ON DELETE CASCADE,
     FOREIGN KEY (type_id) REFERENCES request_type (id)
 );
 
@@ -124,14 +126,6 @@ CREATE TABLE IF NOT EXISTS assignee
     FOREIGN KEY (worker_id) REFERENCES employee (id)
 );
 
-CREATE TABLE IF NOT EXISTS work_request_to_request
-(
-    request_id     INT NOT NULL,
-    request_set_id INT NOT NULL,
-    PRIMARY KEY (request_id, request_set_id),
-    FOREIGN KEY (request_id) REFERENCES request (id),
-    FOREIGN KEY (request_set_id) REFERENCES request_set (id)
-);
 
 CREATE TABLE IF NOT EXISTS users
 (

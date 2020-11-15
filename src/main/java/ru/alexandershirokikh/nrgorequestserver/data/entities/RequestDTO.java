@@ -1,5 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity(name = "request")
+@JsonIgnoreProperties("requestSet")
 public class RequestDTO {
 
     @Id
@@ -52,5 +54,9 @@ public class RequestDTO {
     @ManyToOne
     @JoinColumn(name = "counting_point_reference_id")
     private AccountInfoToCountingPointDTO countingPoint;
+
+    @ManyToOne //(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_set_id", nullable = false)
+    public RequestSetDTO requestSet;
 
 }

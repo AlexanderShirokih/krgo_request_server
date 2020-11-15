@@ -2,7 +2,9 @@ package ru.alexandershirokikh.nrgorequestserver.data.service;
 
 import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestDTO;
 import ru.alexandershirokikh.nrgorequestserver.models.Request;
+import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,12 +13,14 @@ import java.util.List;
 public interface RequestService {
 
     /**
-     * Processes input request.
-     * If request {@code id} is not {@literal null} new request entity will be created.
-     *
-     * @return processed request with actual {@code id}
+     * Updates existing request
      */
-    RequestDTO processRequest(Long requestId, Request inputRequest);
+    void updateRequest(Long requestId, Request inputRequest);
+
+    /**
+     * Adds new request to existing set
+     */
+    void addRequest(Long setId, Request inputRequest);
 
     /**
      * Returns list containing all requests
@@ -27,4 +31,27 @@ public interface RequestService {
      * Deletes request with {@code id }
      */
     void deleteRequest(Long id);
+
+    /**
+     * Returns list of all request sets
+     *
+     * @param date if present then only sets by this date will shown
+     */
+    List<RequestSet> getAllRequestSets(Date date);
+
+    /**
+     * Returns set of all requests by set id
+     */
+    List<RequestDTO> getAllRequestBySetId(Long id);
+
+    /**
+     * Adds new request set or updates existing if request set ID if not {@literal null}
+     */
+    void updateRequestSet(RequestSet newRequestSet);
+
+    /**
+     * Moves requests to another request set
+     */
+    void moveRequest(Long targetId, List<Long> requests);
+
 }
