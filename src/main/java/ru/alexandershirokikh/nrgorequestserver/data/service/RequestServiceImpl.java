@@ -89,11 +89,6 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public void moveRequest(Long targetId, List<Long> requests) {
-
-        //@Query("select t from SixxxoView t where t.idbien IN (:idbienes) ")
-        // public List<SixxxoView> findByIdbienes(
-        //         @Param("idbienes") List<Long> idbienes);
-
         requestSetRepository
                 .findById(targetId)
                 .ifPresent(requestSetDTO -> requestRepository.findAllById(requests)
@@ -119,12 +114,12 @@ public class RequestServiceImpl implements RequestService {
                 // Update counting point
                 var countingPointDTO = countingPointService.updateCountingPoint(accountDTO, countingPoint);
 
-                requestDTO.setCountingPoint(countingPointDTO);
+                requestDTO.setCountingPointAssignment(countingPointDTO);
             } else {
-                requestDTO.setCountingPoint(null);
+                requestDTO.setCountingPointAssignment(null);
             }
         } else {
-            requestDTO.setCountingPoint(null);
+            requestDTO.setCountingPointAssignment(null);
             requestDTO.setAccountInfo(null);
         }
 

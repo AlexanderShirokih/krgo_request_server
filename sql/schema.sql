@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS request_set
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS assignee
+CREATE TABLE IF NOT EXISTS assignment
 (
     request_set_id INT                              NOT NULL,
     worker_id      INT                              NOT NULL,

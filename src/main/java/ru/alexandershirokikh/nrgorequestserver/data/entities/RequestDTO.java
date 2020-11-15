@@ -53,7 +53,7 @@ public class RequestDTO {
      */
     @ManyToOne
     @JoinColumn(name = "counting_point_reference_id")
-    private AccountInfoToCountingPointDTO countingPoint;
+    private AccountInfoToCountingPointDTO countingPointAssignment;
 
     @ManyToOne //(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_set_id", nullable = false)

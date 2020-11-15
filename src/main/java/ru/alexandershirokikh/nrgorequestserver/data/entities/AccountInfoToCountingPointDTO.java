@@ -1,5 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity(name = "account_info_to_counter_point")
+@JsonIgnoreProperties({"accountInfo", "id"})
 public class AccountInfoToCountingPointDTO {
 
     @Id
