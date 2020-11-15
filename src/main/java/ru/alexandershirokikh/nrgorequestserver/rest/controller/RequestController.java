@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller that manages requests and request sets
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/requests")

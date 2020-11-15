@@ -24,7 +24,7 @@ public class RequestSetDTO {
     @Column
     private Date date;
 
-    @OneToMany(mappedBy = "requestSet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "requestSet", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RequestDTO> requests;
 
     @JsonIgnoreProperties("assignments")
