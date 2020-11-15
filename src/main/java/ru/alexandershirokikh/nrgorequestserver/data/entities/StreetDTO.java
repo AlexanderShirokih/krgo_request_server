@@ -1,5 +1,6 @@
-package ru.alexandershirokikh.nrgorequestserver.entities;
+package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +11,9 @@ import javax.persistence.*;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "street")
-public class Street {
+public class StreetDTO {
 
     /**
      * Street ID
@@ -32,5 +34,5 @@ public class Street {
      */
     @ManyToOne
     @JoinColumn(name = "district_id")
-    private District district;
+    private DistrictDTO district;
 }

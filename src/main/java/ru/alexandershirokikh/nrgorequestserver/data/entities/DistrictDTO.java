@@ -1,4 +1,4 @@
-package ru.alexandershirokikh.nrgorequestserver.entities;
+package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity(name = "district")
-public class District {
+public class DistrictDTO {
 
     /**
      * District ID

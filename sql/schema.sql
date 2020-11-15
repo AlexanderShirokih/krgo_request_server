@@ -15,80 +15,76 @@ CREATE TABLE IF NOT EXISTS street
 
 CREATE TABLE IF NOT EXISTS counter_types
 (
-    id           INT PRIMARY KEY AUTO_INCREMENT,
-    name         VARCHAR(24) NOT NULL,
-    accuracy     TINYINT(1)  NOT NULL,
-    bits         TINYINT(1)  NOT NULL,
-    singlePhased BOOL        NOT NULL
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    name          VARCHAR(24) NOT NULL,
+    accuracy      TINYINT(1)  NOT NULL,
+    bits          TINYINT(1)  NOT NULL,
+    single_phased BOOL        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS counter_point
 (
-    id              INT         NOT NULL DEFAULT 0,
-    revision        INT         NOT NULL DEFAULT 0,
-    counter_number  VARCHAR(24) NOT NULL,
     counter_type_id INT,
+    counter_number  VARCHAR(24) NOT NULL,
     tp_name         VARCHAR(8)  NULL,
-    fider_number    TINYINT(2)  NULL,
+    feeder_number   TINYINT(2)  NULL,
+    pillar_number   TINYINT(3)  NULL,
     power           FLOAT       NULL,
-    check_year      TINYINT(4)  NOT NULL,
-    check_quarter   TINYINT(1)  NOT NULL,
+    check_year      TINYINT(4)  NULL,
+    check_quarter   TINYINT(1)  NULL,
+    PRIMARY KEY (counter_type_id, counter_number),
     FOREIGN KEY (counter_type_id) REFERENCES counter_types (id),
-    PRIMARY KEY (id, revision),
     CHECK ( check_year >= 1980 AND check_year <= 2100),
     CHECK ( check_quarter > 0 AND check_quarter < 5)
 );
 
 CREATE TABLE IF NOT EXISTS account_info
 (
-    id               INT         NOT NULL,
+    base_id          INT         NOT NULL,
     revision         INT         NOT NULL DEFAULT 0,
     name             VARCHAR(80) NOT NULL,
     home_number      VARCHAR(6)  NOT NULL,
     apartment_number VARCHAR(6)  NOT NULL,
     street_id        INT         NOT NULL,
     FOREIGN KEY (street_id) REFERENCES street (id),
-    PRIMARY KEY (id, revision)
+    PRIMARY KEY (base_id, revision)
 );
 
 CREATE TABLE IF NOT EXISTS account_info_to_counter_point
 (
-    account_id        INT NOT NULL,
-    account_rev       INT NOT NULL,
-    counter_point_id  INT NOT NULL,
-    counter_point_rev INT NOT NULL,
+    id                    INT         NOT NULL AUTO_INCREMENT,
+    account_id            INT         NOT NULL,
+    account_rev           INT         NOT NULL,
+    counter_type_id       INT         NOT NULL,
+    counting_point_number VARCHAR(24) NOT NULL,
 
-    PRIMARY KEY (account_id, account_rev, counter_point_id, counter_point_rev),
-    FOREIGN KEY (account_id, account_rev) REFERENCES account_info (id, revision),
-    FOREIGN KEY (counter_point_id, counter_point_rev) REFERENCES counter_point (id, revision)
+    PRIMARY KEY (id),
+    UNIQUE KEY (account_id, account_rev, counter_type_id, counting_point_number),
+    FOREIGN KEY (account_id, account_rev) REFERENCES account_info (base_id, revision),
+    FOREIGN KEY (counter_type_id, counting_point_number) REFERENCES counter_point (counter_type_id, counter_number)
 );
 
 CREATE TABLE IF NOT EXISTS request_type
 (
     id         INT(3) AUTO_INCREMENT,
-    short_name VARCHAR(16) NOT NULL,
+    short_name VARCHAR(16) NOT NULL UNIQUE,
     full_name  VARCHAR(64) NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS request
 (
-    id         INT AUTO_INCREMENT,
-    additional VARCHAR(80) NOT NULL DEFAULT '',
-    reason     VARCHAR(64) NOT NULL DEFAULT '',
-    type_id    INT(3)      NOT NULL,
+    id                          INT AUTO_INCREMENT,
+    additional                  VARCHAR(80) NOT NULL DEFAULT '',
+    reason                      VARCHAR(64) NOT NULL DEFAULT '',
+    type_id                     INT(3)      NOT NULL,
+    account_id                  INT         NULL,
+    account_rev                 INT         NULL,
+    counting_point_reference_id INT         NULL,
     PRIMARY KEY (id),
+    FOREIGN KEY (account_id, account_rev) REFERENCES account_info (base_id, revision),
+    FOREIGN KEY (counting_point_reference_id) REFERENCES account_info_to_counter_point (id),
     FOREIGN KEY (type_id) REFERENCES request_type (id)
-);
-
-CREATE TABLE IF NOT EXISTS request_to_account_info
-(
-    request_id  INT,
-    account_id  INT NOT NULL,
-    account_rev INT NOT NULL,
-    PRIMARY KEY (request_id, account_id, account_rev),
-    FOREIGN KEY (request_id) REFERENCES request (id),
-    FOREIGN KEY (account_id, account_rev) REFERENCES account_info (id, revision)
 );
 
 CREATE TABLE IF NOT EXISTS positions
@@ -151,37 +147,3 @@ CREATE TABLE IF NOT EXISTS authorities
     CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username),
     UNIQUE (username, authority)
 );
-
-DELIMITER $$
-
-CREATE TRIGGER fetchNextAccountPointRevision
-    BEFORE INSERT
-    ON counter_point
-    FOR EACH ROW
-BEGIN
-    DECLARE newId INT;
-    DECLARE newRevision INT;
-
-    IF new.id = 0 THEN
-        SELECT IFNULL((SELECT MAX(id) FROM counter_point), 0) + 1 INTO newId;
-        SET newRevision = 1;
-    ELSE
-        SELECT IFNULL((SELECT MAX(revision) FROM counter_point WHERE id = @lastId), 0) + 1 INTO newRevision;
-    END IF;
-
-    SET new.revision = @newRevision;
-    SET new.id = @newId;
-END $$
-
-CREATE TRIGGER fetchNextAccountRevisionId
-    BEFORE INSERT
-    ON account_info
-    FOR EACH ROW
-BEGIN
-    DECLARE newRevision INT;
-
-    SELECT IFNULL((SELECT MAX(revision) FROM account_info WHERE id = @lastId), 0) + 1 INTO newRevision;
-    SET new.revision = @newRevision;
-END $$
-
-DELIMITER ;

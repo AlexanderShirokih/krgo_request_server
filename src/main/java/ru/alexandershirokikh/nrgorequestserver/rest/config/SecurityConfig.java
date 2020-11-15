@@ -1,4 +1,4 @@
-package ru.alexandershirokikh.nrgorequestserver.configs;
+package ru.alexandershirokikh.nrgorequestserver.rest.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,11 +41,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/*").hasRole(USER)
+                .antMatchers(HttpMethod.GET, "/*").hasRole(USER)
+                .antMatchers(HttpMethod.POST, "/districts").hasRole(ADMIN)
                 .antMatchers(HttpMethod.DELETE, "/districts").hasRole(ADMIN)
+                .antMatchers(HttpMethod.POST, "/streets").hasRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/streets").hasRole(ADMIN)
+                .antMatchers(HttpMethod.POST, "/counters").hasRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/counters").hasRole(ADMIN)
+                .antMatchers(HttpMethod.POST, "/requests/types").hasRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/requests/types").hasRole(ADMIN)
                 .anyRequest()
                 .authenticated();
-
     }
 
     @Bean
