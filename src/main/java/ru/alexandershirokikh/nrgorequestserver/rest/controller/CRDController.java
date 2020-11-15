@@ -1,5 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.rest.controller;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class CRDController<A, E, R extends JpaRepository<E, Integer>> {
 
+    @Getter
     private final R repository;
 
     /**
@@ -46,7 +49,7 @@ public abstract class CRDController<A, E, R extends JpaRepository<E, Integer>> {
      * Adds a new entity to the database from given request
      */
     @PostMapping
-    ResponseEntity<E> addNewCounterType(@Valid @RequestBody A request) {
+    ResponseEntity<E> addNewEntity(@Valid @RequestBody A request) {
         try {
             E entity = createEntity(request);
             return ResponseEntity.ok(repository.save(entity));
@@ -59,7 +62,7 @@ public abstract class CRDController<A, E, R extends JpaRepository<E, Integer>> {
      * Deletes district with given id
      */
     @DeleteMapping("{id}")
-    ResponseEntity<Void> deleteCounterType(@PathVariable @Positive Integer id) {
+    ResponseEntity<Void> deleteEntity(@PathVariable @Positive @NotNull Integer id) {
         try {
             repository.deleteById(id);
             return ResponseEntity.ok().build();

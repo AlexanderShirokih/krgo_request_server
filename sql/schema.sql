@@ -101,9 +101,10 @@ CREATE TABLE IF NOT EXISTS employee
     id           INT AUTO_INCREMENT,
     name         VARCHAR(80)             NOT NULL,
     position_id  INT(3)                  NOT NULL,
-    access_level TINYINT(1)              NOT NULL,
-    status       ENUM ('works', 'fired') NOT NULL,
+    access_group TINYINT(1)              NOT NULL,
+    status       ENUM ('WORKS', 'FIRED') NOT NULL,
     PRIMARY KEY (id),
+    UNIQUE KEY (name, position_id),
     FOREIGN KEY (position_id) REFERENCES positions (id)
 );
 
