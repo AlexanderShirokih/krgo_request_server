@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS account_info
     home_number      VARCHAR(6)  NOT NULL,
     apartment_number VARCHAR(6)  NOT NULL,
     street_id        INT         NOT NULL,
+    phone_number     VARCHAR(12) NULL,
     FOREIGN KEY (street_id) REFERENCES street (id),
     PRIMARY KEY (base_id, revision)
 );

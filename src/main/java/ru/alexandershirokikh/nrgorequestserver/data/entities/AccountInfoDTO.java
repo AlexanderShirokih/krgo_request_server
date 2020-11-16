@@ -50,4 +50,9 @@ public class AccountInfoDTO {
     @Column(length = 6)
     private String apartmentNumber;
 
+    /**
+     * User phone number
+     */
+    @Column(length = 12)
+    private String phoneNumber;
 }

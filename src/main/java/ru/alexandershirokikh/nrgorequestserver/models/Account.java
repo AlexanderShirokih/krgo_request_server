@@ -43,4 +43,11 @@ public class Account {
      */
     @Size(max = 6)
     private final String apartmentNumber;
+
+    /**
+     * User phone number
+     */
+    @Size(max = 12)
+    private final String phoneNumber;
+
 }
