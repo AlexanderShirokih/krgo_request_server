@@ -35,12 +35,12 @@ public class CountingPointDTO {
      * Feeder number
      */
     @Column(length = 2)
-    private String feederNumber;
+    private Integer feederNumber;
 
     /**
      * Pillar number
      */
-    @Column(length = 3)
+    @Column(length = 5)
     private String pillarNumber;
 
     /**

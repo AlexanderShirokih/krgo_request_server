@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS counter_point
     counter_number  VARCHAR(24) NOT NULL,
     tp_name         VARCHAR(8)  NULL,
     feeder_number   TINYINT(2)  NULL,
-    pillar_number   TINYINT(3)  NULL,
+    pillar_number   VARCHAR(5)  NULL,
     power           FLOAT       NULL,
     check_year      TINYINT(4)  NULL,
     check_quarter   TINYINT(1)  NULL,

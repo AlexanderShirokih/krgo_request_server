@@ -32,13 +32,13 @@ public class CountingPoint {
     /**
      * Feeder number
      */
-    @Size(max = 2)
-    private final String feederNumber;
+    @Max(99)
+    private final Integer feederNumber;
 
     /**
      * Pillar number
      */
-    @Size(max = 3)
+    @Size(max = 5)
     private final String pillarNumber;
 
     /**
