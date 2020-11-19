@@ -131,7 +131,8 @@ public class RequestServiceImpl implements RequestService {
                 accountInfoDTO.getName(),
                 accountInfoDTO.getStreet().getId(),
                 accountInfoDTO.getHomeNumber(),
-                accountInfoDTO.getApartmentNumber()
+                accountInfoDTO.getApartmentNumber(),
+                accountInfoDTO.getPhoneNumber()
         );
     }
 
