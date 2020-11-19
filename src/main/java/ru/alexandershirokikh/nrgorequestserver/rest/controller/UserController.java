@@ -14,6 +14,8 @@ import ru.alexandershirokikh.nrgorequestserver.models.UserAccount;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final String ADMIN_ROLE = "ROLE_ADMIN";
+
     /**
      * Returns info about current user
      */
@@ -26,7 +28,7 @@ public class UserController {
                 username.isAuthenticated() &&
                         username.getAuthorities()
                                 .stream()
-                                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"))
+                                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(ADMIN_ROLE))
         );
     }
 
