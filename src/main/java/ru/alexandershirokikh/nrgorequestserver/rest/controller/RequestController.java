@@ -1,7 +1,7 @@
 package ru.alexandershirokikh.nrgorequestserver.rest.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.alexandershirokikh.nrgorequestserver.data.service.RequestService;
 import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
@@ -10,7 +10,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.Date;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,9 +52,9 @@ public class RequestController {
      * Gets list of all request sets
      */
     @GetMapping
-    public List<RequestSet> getAllRequestSets(
-            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
-        return requestService.getAllRequestSets(date);
+    public Page<RequestSet> getAllRequestSets(@RequestParam(value = "offset", required = false, defaultValue = "0") @PositiveOrZero Integer offset,
+                                              @RequestParam(value = "size", required = false, defaultValue = "10") @Positive Integer size) {
+        return requestService.getAllRequestSets(offset, size);
     }
 
     /**

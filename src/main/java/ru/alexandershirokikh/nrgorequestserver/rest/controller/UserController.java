@@ -21,8 +21,6 @@ public class UserController {
      */
     @GetMapping()
     public UserAccount getUserInfo(@AuthenticationPrincipal Authentication username) {
-        System.out.println("AUTH: " + username.getAuthorities().toString());
-
         return new UserAccount(
                 username.getName(),
                 username.isAuthenticated() &&
