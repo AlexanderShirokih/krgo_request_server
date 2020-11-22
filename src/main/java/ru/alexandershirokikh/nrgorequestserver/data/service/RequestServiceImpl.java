@@ -1,6 +1,10 @@
 package ru.alexandershirokikh.nrgorequestserver.data.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.alexandershirokikh.nrgorequestserver.data.dao.EmployeeAssignmentRepository;
 import ru.alexandershirokikh.nrgorequestserver.data.dao.EmployeeRepository;
@@ -10,7 +14,6 @@ import ru.alexandershirokikh.nrgorequestserver.data.entities.*;
 import ru.alexandershirokikh.nrgorequestserver.models.*;
 
 import javax.transaction.Transactional;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,11 +64,17 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestSet> getAllRequestSets(Date date) {
-        if (date == null)
-            return requestSetRepository.findAll().stream().map(this::buildShortRequestSet).collect(Collectors.toList());
-        else
-            return requestSetRepository.findAllByDate(date).stream().map(this::buildShortRequestSet).collect(Collectors.toList());
+    public Page<RequestSet> getAllRequestSets(Integer pageNum,
+                                              Integer size) {
+        Pageable sortedByDateDesc =
+                pageNum == null || size == null ? Pageable.unpaged() :
+                        PageRequest.of(pageNum, size, Sort.by("date").descending());
+
+        Page<RequestSetDTO> page = requestSetRepository.findAll(sortedByDateDesc);
+
+
+
+        return page.map(this::buildShortRequestSet);
     }
 
     private RequestSet buildShortRequestSet(RequestSetDTO dto) {

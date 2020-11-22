@@ -1,10 +1,10 @@
 package ru.alexandershirokikh.nrgorequestserver.data.service;
 
+import org.springframework.data.domain.Page;
 import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
 import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +35,8 @@ public interface RequestService {
 
     /**
      * Returns list of all request sets
-     *
-     * @param date if present then only sets by this date will shown
      */
-    List<RequestSet> getAllRequestSets(Date date);
+    Page<RequestSet> getAllRequestSets(Integer page, Integer size);
 
     /**
      * Returns set of all requests by set id
