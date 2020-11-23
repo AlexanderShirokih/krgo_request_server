@@ -39,14 +39,9 @@ public interface RequestService {
     Page<RequestSet> getAllRequestSets(Integer page, Integer size);
 
     /**
-     * Gets list of all dates where request sets exists in format yyyy-MM-dd
+     * Gets list of all requests
      */
-    List<String> getAllRequestDates();
-
-    /**
-     * Gets list of all request sets dated by year and month
-     */
-    List<RequestSet> getAllRequestSetsByYearAndMonth(Integer year, Integer month);
+    List<RequestSet> getAllRequests();
 
     /**
      * Returns set of all requests by set id

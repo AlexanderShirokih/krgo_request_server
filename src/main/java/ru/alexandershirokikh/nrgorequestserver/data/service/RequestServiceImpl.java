@@ -14,7 +14,6 @@ import ru.alexandershirokikh.nrgorequestserver.data.entities.*;
 import ru.alexandershirokikh.nrgorequestserver.models.*;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,17 +74,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<String> getAllRequestDates() {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return requestSetRepository.findAllDistinctDates().stream()
-                .map(dateFormat::format)
-                .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<RequestSet> getAllRequestSetsByYearAndMonth(Integer year, Integer month) {
-        return requestSetRepository.findAllByDate(year, month)
+    public List<RequestSet> getAllRequests() {
+        return requestSetRepository.findAll()
                 .stream()
                 .map(this::buildShortRequestSet)
                 .collect(Collectors.toList());
