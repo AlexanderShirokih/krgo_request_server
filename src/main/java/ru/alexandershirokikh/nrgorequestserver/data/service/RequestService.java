@@ -39,6 +39,16 @@ public interface RequestService {
     Page<RequestSet> getAllRequestSets(Integer page, Integer size);
 
     /**
+     * Gets list of all dates where request sets exists in format yyyy-MM-dd
+     */
+    List<String> getAllRequestDates();
+
+    /**
+     * Gets list of all request sets dated by year and month
+     */
+    List<RequestSet> getAllRequestSetsByYearAndMonth(Integer year, Integer month);
+
+    /**
      * Returns set of all requests by set id
      */
     Optional<RequestSet> getAllRequestBySetId(Long id);
@@ -62,4 +72,5 @@ public interface RequestService {
      * Detaches employee from request set
      */
     void detachEmployee(Long requestSetId, Integer employeeId);
+
 }

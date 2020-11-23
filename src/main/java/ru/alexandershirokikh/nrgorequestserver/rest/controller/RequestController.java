@@ -9,6 +9,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -55,6 +56,23 @@ public class RequestController {
     public Page<RequestSet> getAllRequestSets(@RequestParam(value = "page", required = false, defaultValue = "0") @PositiveOrZero Integer page,
                                               @RequestParam(value = "size", required = false, defaultValue = "10") @Positive Integer size) {
         return requestService.getAllRequestSets(page, size);
+    }
+
+    /**
+     * Gets list of all dates where request sets exists in format yyyy-MM-dd
+     */
+    @GetMapping("/dates")
+    public List<String> getAllRequestDates() {
+        return requestService.getAllRequestDates();
+    }
+
+    /**
+     * Gets list of all request sets dated by year and month
+     */
+    @GetMapping("/dates/{year}/{month}")
+    public List<RequestSet> getAllRequestSetsByYearAndMonth(@PathVariable("year") @Positive Integer year,
+                                                            @PathVariable("month") @Positive @Max(12) Integer month) {
+        return requestService.getAllRequestSetsByYearAndMonth(year, month);
     }
 
     /**

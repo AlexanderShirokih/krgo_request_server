@@ -14,6 +14,7 @@ import ru.alexandershirokikh.nrgorequestserver.data.entities.*;
 import ru.alexandershirokikh.nrgorequestserver.models.*;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,12 +71,26 @@ public class RequestServiceImpl implements RequestService {
                 pageNum == null || size == null ? Pageable.unpaged() :
                         PageRequest.of(pageNum, size, Sort.by("date").descending());
 
-        Page<RequestSetDTO> page = requestSetRepository.findAll(sortedByDateDesc);
-
-
-
-        return page.map(this::buildShortRequestSet);
+        return requestSetRepository.findAll(sortedByDateDesc).map(this::buildShortRequestSet);
     }
+
+    @Override
+    public List<String> getAllRequestDates() {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return requestSetRepository.findAllDistinctDates().stream()
+                .map(dateFormat::format)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<RequestSet> getAllRequestSetsByYearAndMonth(Integer year, Integer month) {
+        return requestSetRepository.findAllByDate(year, month)
+                .stream()
+                .map(this::buildShortRequestSet)
+                .collect(Collectors.toList());
+    }
+
 
     private RequestSet buildShortRequestSet(RequestSetDTO dto) {
         return new RequestSet(dto.getId(), dto.getName(), dto.getDate(), null, null);
