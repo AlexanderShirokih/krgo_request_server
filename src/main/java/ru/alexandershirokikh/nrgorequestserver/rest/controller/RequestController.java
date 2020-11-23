@@ -74,11 +74,11 @@ public class RequestController {
     }
 
     /**
-     * Adds new empty request set or update it if ID is {@literal null}
+     * Adds new empty request set or updates it if ID is {@literal null}
      */
     @PostMapping
-    public void updateRequestSet(@Valid @RequestBody RequestSet newRequestSet) {
-        requestService.updateRequestSet(newRequestSet);
+    public RequestSet updateRequestSet(@Valid @RequestBody RequestSet newRequestSet) {
+        return requestService.updateRequestSet(newRequestSet);
     }
 
     /**

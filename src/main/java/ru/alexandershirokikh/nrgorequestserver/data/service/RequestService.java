@@ -50,8 +50,9 @@ public interface RequestService {
 
     /**
      * Adds new request set or updates existing if request set ID if not {@literal null}
+     * @return
      */
-    void updateRequestSet(RequestSet newRequestSet);
+    RequestSet updateRequestSet(RequestSet newRequestSet);
 
     /**
      * Moves requests to another request set

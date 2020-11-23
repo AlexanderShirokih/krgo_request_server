@@ -162,14 +162,15 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void updateRequestSet(RequestSet updatedRequestSet) {
+    public RequestSet updateRequestSet(RequestSet updatedRequestSet) {
         RequestSetDTO dto = updatedRequestSet.getId() == null ? new RequestSetDTO() :
                 requestSetRepository.findById(updatedRequestSet.getId()).orElse(new RequestSetDTO());
 
         dto.setId(updatedRequestSet.getId());
         dto.setName(updatedRequestSet.getName());
         dto.setDate(updatedRequestSet.getDate());
-        requestSetRepository.save(dto);
+
+        return buildShortRequestSet(requestSetRepository.save(dto));
     }
 
     @Transactional
