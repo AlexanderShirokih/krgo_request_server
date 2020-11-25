@@ -157,7 +157,14 @@ public class RequestServiceImpl implements RequestService {
                 employeeDTO.getId(),
                 employeeDTO.getName(),
                 employeeDTO.getAccessGroup(),
-                employeeDTO.getPosition().getId()
+                buildPosition(employeeDTO.getPosition())
+        );
+    }
+
+    private Position buildPosition(PositionDTO position) {
+        return new Position(
+                position.getId(),
+                position.getName()
         );
     }
 

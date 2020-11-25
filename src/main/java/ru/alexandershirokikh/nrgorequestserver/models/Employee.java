@@ -33,8 +33,7 @@ public class Employee {
     /**
      * Employee position
      */
-    @Positive
     @NotNull
-    private final Integer positionId;
+    private final Position position;
 
 }

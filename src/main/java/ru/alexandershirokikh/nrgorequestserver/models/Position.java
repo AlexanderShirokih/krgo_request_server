@@ -1,22 +1,26 @@
 package ru.alexandershirokikh.nrgorequestserver.models;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 
 /**
  * Describes API request for adding new position
  */
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Data
 public class Position {
+
+    /**
+     * Position ID. Used for server responses
+     */
+    final Integer id;
+
     /**
      * Position name
      */
-    @NotEmpty
     @Size(min = 2, max = 32)
-    String name;
+    final String name;
 }

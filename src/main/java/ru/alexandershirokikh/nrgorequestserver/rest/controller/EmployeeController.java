@@ -30,7 +30,7 @@ public class EmployeeController extends CRDController<Employee, EmployeeDTO, Emp
         dto.setStatus(EmployeeDTO.EmployeeStatus.WORKS);
 
         var positionDTO = new PositionDTO();
-        positionDTO.setId(employee.getPositionId());
+        positionDTO.setId(employee.getPosition().getId());
         dto.setPosition(positionDTO);
         return dto;
     }
