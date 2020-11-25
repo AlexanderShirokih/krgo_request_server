@@ -22,9 +22,9 @@ public class StreetController extends CRDController<Street, StreetDTO, StreetRep
     protected StreetDTO createEntity(Street request) {
         var street = new StreetDTO();
         street.setName(request.getName());
-        if (request.getDistrictId() != null) {
+        if (request.getDistrict() != null && request.getDistrict().getId() != null) {
             var district = new DistrictDTO();
-            district.setId(request.getDistrictId());
+            district.setId(request.getDistrict().getId());
             street.setDistrict(district);
         }
         return street;

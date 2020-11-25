@@ -8,22 +8,18 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity(name = "counter_point")
-@IdClass(CountingPointKey.class)
 public class CountingPointDTO {
 
-    /**
-     * Counter number
-     */
-    @Id
-    @Column(length = 24, nullable = false)
-    private String counterNumber;
+    @EmbeddedId
+    private CountingPointPK key;
 
     /**
      * Assigned counter type
      */
-    @Id
-    @Column(name = "counter_type_id", nullable = false)
-    private Integer counterTypeId;
+    @ManyToOne
+    @JoinColumn(name = "counter_type_id", nullable = false)
+    @MapsId("counterTypeId")
+    private CounterTypeDTO counterType;
 
     /**
      * Transformation substation name

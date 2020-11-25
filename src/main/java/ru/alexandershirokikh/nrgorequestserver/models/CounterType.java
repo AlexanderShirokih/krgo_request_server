@@ -2,28 +2,34 @@ package ru.alexandershirokikh.nrgorequestserver.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.*;
 
 /**
  * Describes API request for adding new counter type
  */
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Data
 public class CounterType {
+
+    /**
+     * Internal ID
+     */
+    private final Integer id;
 
     /**
      * Counter type name
      */
     @NotEmpty
     @Size(max = 24)
-    private String name;
+    private final String name;
 
     /**
      * Counter accuracy. Less value means more precise counter
      */
     @NotNull
-    private CounterAccuracy accuracy;
+    private final CounterAccuracy accuracy;
 
     /**
      * Counter bits count (before decimal place)
@@ -31,12 +37,12 @@ public class CounterType {
     @NotNull
     @Min(3)
     @Max(8)
-    private Integer bits;
+    private final Integer bits;
 
     /**
      * {@literal true} if counter is single phased, @{literal false} if it is tree phased
      */
     @NotNull
-    private Boolean singlePhased;
+    private final Boolean singlePhased;
 
 }

@@ -29,16 +29,16 @@ public class CountingPointServiceImpl implements CountingPointService {
 
     @Override
     public List<CountingPointDTO> getCountingPoints(String number) {
-        return countingPointsRepository.findByCounterNumber(number);
+        return countingPointsRepository.findByKeyCounterNumber(number);
     }
 
     @Override
     public AccountInfoToCountingPointDTO updateCountingPoint(AccountInfoDTO owner, CountingPoint countingPoint) {
         var counterType = new CounterTypeDTO();
-        counterType.setId(countingPoint.getCounterTypeId());
+        counterType.setId(countingPoint.getCounterType().getId());
 
         var existingCountingPoint = countingPointsRepository
-                .findById(new CountingPointKey(countingPoint.getCounterNumber(), counterType.getId()));
+                .findById(new CountingPointPK(countingPoint.getCounterNumber(), counterType.getId()));
 
         var newCountingPoint = createDTO(countingPoint);
 
@@ -66,10 +66,13 @@ public class CountingPointServiceImpl implements CountingPointService {
 
     private CountingPointDTO updateCountingPointIfNeeded(CountingPointDTO currentDTO, CountingPointDTO newDTO) {
         if (!currentDTO.equals(newDTO)) {
+            CounterTypeDTO counterType = new CounterTypeDTO();
+            counterType.setId(newDTO.getCounterType().getId());
+
             currentDTO.setTpName(newDTO.getTpName());
             currentDTO.setPillarNumber(newDTO.getPillarNumber());
             currentDTO.setFeederNumber(newDTO.getFeederNumber());
-            currentDTO.setCounterTypeId(newDTO.getCounterTypeId());
+            currentDTO.setCounterType(counterType);
             currentDTO.setCheckQuarter(newDTO.getCheckQuarter());
             currentDTO.setCheckYear(newDTO.getCheckYear());
             currentDTO.setPower(newDTO.getPower());
@@ -80,16 +83,19 @@ public class CountingPointServiceImpl implements CountingPointService {
 
     private CountingPointDTO createDTO(CountingPoint countingPoint) {
         var dto = new CountingPointDTO();
+        var key = new CountingPointPK();
+        key.setCounterNumber(countingPoint.getCounterNumber());
+        key.setCounterTypeId(countingPoint.getCounterType().getId());
 
-        dto.setCounterNumber(countingPoint.getCounterNumber());
+        dto.setKey(key);
         dto.setCheckQuarter(countingPoint.getCheckQuarter());
         dto.setCheckYear(countingPoint.getCheckYear());
         dto.setFeederNumber(countingPoint.getFeederNumber());
         dto.setPillarNumber(countingPoint.getPillarNumber());
         dto.setTpName(countingPoint.getTpName());
 
-        if (countingPoint.getCounterTypeId() != null) {
-            dto.setCounterTypeId(new CounterTypeDTO(countingPoint.getCounterTypeId(), null, null, null, null).getId());
+        if (countingPoint.getCounterType() != null) {
+            dto.setCounterType(new CounterTypeDTO(countingPoint.getCounterType().getId(), null, null, null, null));
         }
 
         return dto;

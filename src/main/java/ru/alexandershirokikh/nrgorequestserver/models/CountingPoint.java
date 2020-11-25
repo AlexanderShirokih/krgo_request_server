@@ -21,7 +21,7 @@ public class CountingPoint {
      * Assigned counter type.
      */
     @NotNull
-    private final Integer counterTypeId;
+    private final CounterType counterType;
 
     /**
      * Transformation substation name

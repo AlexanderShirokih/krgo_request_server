@@ -1,28 +1,32 @@
 package ru.alexandershirokikh.nrgorequestserver.models;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 /**
  * Describes API request to add new street
  */
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Data
 public class Street {
+
+    /**
+     * Internal ID
+     */
+    final Integer id;
+
     /**
      * Street name
      */
     @NotEmpty
     @Size(max = 32)
-    String name;
+    final String name;
 
     /**
      * Optional district id
      */
-    @Min(1)
-    Integer districtId;
+    final District district;
 }

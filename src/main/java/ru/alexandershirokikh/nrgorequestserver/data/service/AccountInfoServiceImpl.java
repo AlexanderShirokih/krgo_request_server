@@ -70,8 +70,8 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         accountInfo.setApartmentNumber(updateRequest.getApartmentNumber());
         accountInfo.setPhoneNumber(updateRequest.getPhoneNumber());
 
-        if (updateRequest.getStreetId() != null) {
-            accountInfo.setStreet(new StreetDTO(updateRequest.getStreetId(), null, null));
+        if (updateRequest.getStreet() != null) {
+            accountInfo.setStreet(new StreetDTO(updateRequest.getStreet().getId(), null, null));
         }
         return accountInfo;
     }

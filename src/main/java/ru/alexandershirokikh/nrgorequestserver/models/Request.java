@@ -3,7 +3,6 @@ package ru.alexandershirokikh.nrgorequestserver.models;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 /**
@@ -33,9 +32,8 @@ public class Request {
     /**
      * Associated request type
      */
-    @Positive
     @NotNull
-    private final Integer requestTypeId;
+    private final RequestType requestType;
 
     /**
      * Owning account info

@@ -3,7 +3,7 @@ package ru.alexandershirokikh.nrgorequestserver.data.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.alexandershirokikh.nrgorequestserver.data.entities.CountingPointDTO;
-import ru.alexandershirokikh.nrgorequestserver.data.entities.CountingPointKey;
+import ru.alexandershirokikh.nrgorequestserver.data.entities.CountingPointPK;
 
 import java.util.List;
 
@@ -12,12 +12,12 @@ import java.util.List;
  *
  * @see CountingPointDTO
  */
-public interface CountingPointsRepository extends JpaRepository<CountingPointDTO, CountingPointKey> {
+public interface CountingPointsRepository extends JpaRepository<CountingPointDTO, CountingPointPK> {
 
     /**
      * Finds all counters by it's number
      */
-    List<CountingPointDTO> findByCounterNumber(String counterNumber);
+    List<CountingPointDTO> findByKeyCounterNumber(String counterNumber);
 
 }
 

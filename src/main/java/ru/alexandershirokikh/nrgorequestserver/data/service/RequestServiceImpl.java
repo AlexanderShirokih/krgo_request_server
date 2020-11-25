@@ -115,9 +115,17 @@ public class RequestServiceImpl implements RequestService {
                 requestDTO.getId(),
                 requestDTO.getAdditional(),
                 requestDTO.getReason(),
-                requestDTO.getRequestType().getId(),
+                buildRequestType(requestDTO.getRequestType()),
                 buildAccount(requestDTO.getAccountInfo()),
                 buildCountingPoint(requestDTO.getCountingPointAssignment())
+        );
+    }
+
+    private RequestType buildRequestType(RequestTypeDTO requestTypeDTO) {
+        return new RequestType(
+                requestTypeDTO.getId(),
+                requestTypeDTO.getShortName(),
+                requestTypeDTO.getFullName()
         );
     }
 
@@ -126,8 +134,8 @@ public class RequestServiceImpl implements RequestService {
             return null;
         final CountingPointDTO cPoint = countingPointAssignment.getCountingPoint();
         return new CountingPoint(
-                cPoint.getCounterNumber(),
-                cPoint.getCounterTypeId(),
+                cPoint.getKey().getCounterNumber(),
+                buildCounterType(cPoint.getCounterType()),
                 cPoint.getTpName(),
                 cPoint.getFeederNumber(),
                 cPoint.getPillarNumber(),
@@ -137,18 +145,44 @@ public class RequestServiceImpl implements RequestService {
         );
     }
 
+    private CounterType buildCounterType(CounterTypeDTO counterType) {
+        return new CounterType(
+                counterType.getId(),
+                counterType.getName(),
+                counterType.getAccuracy(),
+                counterType.getBits(),
+                counterType.getSinglePhased()
+        );
+    }
+
     private Account buildAccount(AccountInfoDTO accountInfoDTO) {
         if (accountInfoDTO == null)
             return null;
         return new Account(
                 accountInfoDTO.getBaseId(),
                 accountInfoDTO.getName(),
-                accountInfoDTO.getStreet().getId(),
+                buildStreet(accountInfoDTO.getStreet()),
                 accountInfoDTO.getHomeNumber(),
                 accountInfoDTO.getApartmentNumber(),
                 accountInfoDTO.getPhoneNumber()
         );
     }
+
+    private Street buildStreet(StreetDTO street) {
+        return new Street(
+                street.getId(),
+                street.getName(),
+                buildDistrict(street.getDistrict())
+        );
+    }
+
+    private District buildDistrict(DistrictDTO district) {
+        return new District(
+                district.getId(),
+                district.getName()
+        );
+    }
+
 
     private Employee buildEmployee(EmployeeDTO employeeDTO) {
         if (employeeDTO == null)
@@ -225,7 +259,7 @@ public class RequestServiceImpl implements RequestService {
         requestDTO.setReason(inputRequest.getReason());
 
         var requestTypeDTO = new RequestTypeDTO();
-        requestTypeDTO.setId(inputRequest.getRequestTypeId());
+        requestTypeDTO.setId(inputRequest.getRequestType().getId());
         requestDTO.setRequestType(requestTypeDTO);
 
         var accountInfo = inputRequest.getAccountInfo();
