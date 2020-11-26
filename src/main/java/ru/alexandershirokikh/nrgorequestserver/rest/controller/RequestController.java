@@ -2,6 +2,7 @@ package ru.alexandershirokikh.nrgorequestserver.rest.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.alexandershirokikh.nrgorequestserver.data.service.RequestService;
 import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
@@ -11,6 +12,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,11 +60,14 @@ public class RequestController {
     }
 
     /**
-     * Gets list of all dates where request sets exists in format yyyy-MM-dd
+     * Gets list of all requests optionally filtering by date.
      */
     @GetMapping("/all")
-    public List<RequestSet> getAllRequests() {
-        return requestService.getAllRequests();
+    public List<RequestSet> getAllRequests(
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
+            @RequestParam(value = "full", required = false, defaultValue = "false") Boolean isFull
+    ) {
+        return requestService.getAllRequests(date, isFull);
     }
 
     /**
