@@ -14,6 +14,7 @@ import ru.alexandershirokikh.nrgorequestserver.data.entities.*;
 import ru.alexandershirokikh.nrgorequestserver.models.*;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,8 +75,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestSet> getAllRequests() {
-        return requestSetRepository.findAll()
+    public List<RequestSet> getAllRequests(Date date) {
+        return (date == null ? requestSetRepository.findAll() : requestSetRepository.findAllByDate(date))
                 .stream()
                 .map(this::buildShortRequestSet)
                 .collect(Collectors.toList());

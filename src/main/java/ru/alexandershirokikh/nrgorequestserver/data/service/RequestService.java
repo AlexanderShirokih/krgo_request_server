@@ -5,6 +5,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
 import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public interface RequestService {
     /**
      * Gets list of all requests
      */
-    List<RequestSet> getAllRequests();
+    List<RequestSet> getAllRequests(Date date);
 
     /**
      * Returns set of all requests by set id
@@ -50,7 +51,6 @@ public interface RequestService {
 
     /**
      * Adds new request set or updates existing if request set ID if not {@literal null}
-     * @return
      */
     RequestSet updateRequestSet(RequestSet newRequestSet);
 
