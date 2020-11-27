@@ -3,6 +3,7 @@ package ru.alexandershirokikh.nrgorequestserver.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.alexandershirokikh.nrgorequestserver.models.Employee;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,11 +13,6 @@ import java.util.Set;
 @Entity(name = "employee")
 @JsonIgnoreProperties("assignments")
 public class EmployeeDTO {
-
-    public enum EmployeeStatus {
-        WORKS,
-        FIRED
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +30,7 @@ public class EmployeeDTO {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private EmployeeStatus status = EmployeeStatus.WORKS;
+    private Employee.EmployeeStatus status = Employee.EmployeeStatus.WORKS;
 
     @JsonIgnoreProperties("assignments")
     @OneToMany(mappedBy = "employee")

@@ -28,7 +28,7 @@ public class EmployeeController extends CRUDController<Employee, EmployeeDTO, Em
         dto.setId(employee.getId());
         dto.setName(employee.getName());
         dto.setAccessGroup(employee.getAccessGroup());
-        dto.setStatus(EmployeeDTO.EmployeeStatus.WORKS);
+        dto.setStatus(employee.getStatus());
 
         var positionDTO = new PositionDTO();
         positionDTO.setId(employee.getPosition().getId());
@@ -45,7 +45,7 @@ public class EmployeeController extends CRUDController<Employee, EmployeeDTO, Em
             return super.deleteEntity(id);
         } catch (DataIntegrityViolationException e) {
             getRepository().findById(id).ifPresent(employee -> {
-                employee.setStatus(EmployeeDTO.EmployeeStatus.FIRED);
+                employee.setStatus(Employee.EmployeeStatus.FIRED);
                 getRepository().save(employee);
             });
         }

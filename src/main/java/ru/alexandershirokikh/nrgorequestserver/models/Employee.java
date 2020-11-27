@@ -10,6 +10,11 @@ import javax.validation.constraints.*;
 @Data
 public class Employee {
 
+    public enum EmployeeStatus {
+        WORKS,
+        FIRED
+    }
+
     /**
      * Employee id. Used in responses only.
      */
@@ -36,4 +41,8 @@ public class Employee {
     @NotNull
     private final Position position;
 
+    /**
+     * Employee work status
+     */
+    private final EmployeeStatus status;
 }
