@@ -16,7 +16,7 @@ import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/employees")
-public class EmployeeController extends CRDController<Employee, EmployeeDTO, EmployeeRepository> {
+public class EmployeeController extends CRUDController<Employee, EmployeeDTO, EmployeeRepository> {
 
     public EmployeeController(EmployeeRepository repository) {
         super(repository);
@@ -25,6 +25,7 @@ public class EmployeeController extends CRDController<Employee, EmployeeDTO, Emp
     @Override
     protected EmployeeDTO createEntity(Employee employee) {
         var dto = new EmployeeDTO();
+        dto.setId(employee.getId());
         dto.setName(employee.getName());
         dto.setAccessGroup(employee.getAccessGroup());
         dto.setStatus(EmployeeDTO.EmployeeStatus.WORKS);

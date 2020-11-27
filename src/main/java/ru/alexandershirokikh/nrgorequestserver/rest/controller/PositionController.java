@@ -8,7 +8,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.Position;
 
 @RestController
 @RequestMapping("/positions")
-public class PositionController extends CRDController<Position, PositionDTO, PositionRepository> {
+public class PositionController extends CRUDController<Position, PositionDTO, PositionRepository> {
 
     public PositionController(PositionRepository repository) {
         super(repository);
@@ -17,6 +17,7 @@ public class PositionController extends CRDController<Position, PositionDTO, Pos
     @Override
     protected PositionDTO createEntity(Position request) {
         var dto = new PositionDTO();
+        dto.setId(request.getId());
         dto.setName(request.getName());
         return dto;
     }

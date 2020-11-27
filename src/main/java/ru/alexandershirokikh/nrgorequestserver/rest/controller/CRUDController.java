@@ -21,13 +21,13 @@ import java.util.List;
  * <p>
  *     <ul>
  *         <li>Gets list of all entities by GET / request.</li>
- *         <li>Adds new entity by POST / request</li>
+ *         <li>Adds or updates new entity by POST / request</li>
  *         <li>Deletes entity with {@literal id} by DELETE /{id} request</li>
  *     </ul>
  * </p>
  */
 @RequiredArgsConstructor
-public abstract class CRDController<A, E, R extends JpaRepository<E, Integer>> {
+public abstract class CRUDController<A, E, R extends JpaRepository<E, Integer>> {
 
     @Getter
     private final R repository;
@@ -46,10 +46,11 @@ public abstract class CRDController<A, E, R extends JpaRepository<E, Integer>> {
     abstract protected E createEntity(A request);
 
     /**
-     * Adds a new entity to the database from given request
+     * Adds a new entity to the database from given request or ID is {@literal null}
+     * or updates existing value if ID is present.
      */
     @PostMapping
-    ResponseEntity<E> addNewEntity(@Valid @RequestBody A request) {
+    ResponseEntity<E> save(@Valid @RequestBody A request) {
         try {
             E entity = createEntity(request);
             return ResponseEntity.ok(repository.save(entity));

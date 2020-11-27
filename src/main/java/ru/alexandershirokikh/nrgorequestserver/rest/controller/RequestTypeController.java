@@ -11,7 +11,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.RequestType;
  */
 @RequestMapping("/requests/types")
 @RestController
-public class RequestTypeController extends CRDController<RequestType, RequestTypeDTO, RequestTypeRepository> {
+public class RequestTypeController extends CRUDController<RequestType, RequestTypeDTO, RequestTypeRepository> {
 
     public RequestTypeController(RequestTypeRepository repository) {
         super(repository);
@@ -20,6 +20,7 @@ public class RequestTypeController extends CRDController<RequestType, RequestTyp
     @Override
     protected RequestTypeDTO createEntity(RequestType request) {
         var requestType = new RequestTypeDTO();
+        requestType.setId(request.getId());
         requestType.setShortName(request.getShortName());
         requestType.setFullName(request.getFullName());
         return requestType;

@@ -12,7 +12,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.Street;
  */
 @RestController
 @RequestMapping("/streets")
-public class StreetController extends CRDController<Street, StreetDTO, StreetRepository> {
+public class StreetController extends CRUDController<Street, StreetDTO, StreetRepository> {
 
     public StreetController(StreetRepository repository) {
         super(repository);
@@ -21,6 +21,7 @@ public class StreetController extends CRDController<Street, StreetDTO, StreetRep
     @Override
     protected StreetDTO createEntity(Street request) {
         var street = new StreetDTO();
+        street.setId(request.getId());
         street.setName(request.getName());
         if (request.getDistrict() != null && request.getDistrict().getId() != null) {
             var district = new DistrictDTO();

@@ -11,7 +11,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.District;
  */
 @RestController
 @RequestMapping("/districts")
-public class DistrictController extends CRDController<District, DistrictDTO, DistrictRepository> {
+public class DistrictController extends CRUDController<District, DistrictDTO, DistrictRepository> {
 
     public DistrictController(DistrictRepository repository) {
         super(repository);
@@ -20,6 +20,7 @@ public class DistrictController extends CRDController<District, DistrictDTO, Dis
     @Override
     protected DistrictDTO createEntity(District request) {
         var district = new DistrictDTO();
+        district.setId(request.getId());
         district.setName(request.getName());
         return district;
     }

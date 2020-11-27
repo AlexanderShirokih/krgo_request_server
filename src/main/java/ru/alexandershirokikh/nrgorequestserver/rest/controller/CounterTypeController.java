@@ -11,7 +11,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.CounterType;
  */
 @RestController
 @RequestMapping("/counters")
-public class CounterTypeController extends CRDController<CounterType, CounterTypeDTO, CounterTypeRepository> {
+public class CounterTypeController extends CRUDController<CounterType, CounterTypeDTO, CounterTypeRepository> {
 
     public CounterTypeController(CounterTypeRepository repository) {
         super(repository);
@@ -20,6 +20,7 @@ public class CounterTypeController extends CRDController<CounterType, CounterTyp
     @Override
     protected CounterTypeDTO createEntity(CounterType request) {
         var counterType = new CounterTypeDTO();
+        counterType.setId(request.getId());
         counterType.setName(request.getName());
         counterType.setAccuracy(request.getAccuracy());
         counterType.setBits(request.getBits());
