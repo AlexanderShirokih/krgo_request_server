@@ -225,35 +225,43 @@ public class RequestServiceImpl implements RequestService {
                         .forEach(requestDTO -> requestDTO.setRequestSet(requestSetDTO)));
     }
 
+    @Transactional
     @Override
-    public void assignEmployee(Long requestSetId, Integer employeeId, EmployeeAssignmentType assignmentType) {
+    public void assignEmployee(Long requestSetId, Integer employeeId, EmployeeAssignmentType type) {
         requestSetRepository.findById(requestSetId)
                 .ifPresent(requestSet -> employeeRepository
-                                .findById(employeeId)
-                                .ifPresent(employeeDTO -> {
-                                            var assignment = new EmployeeAssignmentDTO();
-                                            assignment.setEmployee(employeeDTO);
-                                            assignment.setRequestSet(requestSet);
-                                            assignment.setAssignmentType(assignmentType);
-                                            assignment.setAssignmentKey(new EmployeeAssignmentKey(requestSetId, employeeId));
-                                            employeeAssignmentRepository.save(assignment);
-//                                    requestSet.getAssignments().add(assignment);
-//                                    employeeDTO.getAssignments().add(assignment);
-                                        }
-                                )
+                        .findById(employeeId)
+                        .ifPresent(employeeDTO -> {
+                                    var key = new EmployeeAssignmentKey(requestSetId, employeeId);
+                                    var existingAssignments = requestSet.getAssignments();
+
+                                    if (type == EmployeeAssignmentType.CHIEF || type == EmployeeAssignmentType.MAIN) {
+                                        // If we already have main or chief assignments, delete previous values
+                                        employeeAssignmentRepository.deleteAll(
+                                                existingAssignments.stream()
+                                                        .filter(assignmentDTO -> assignmentDTO
+                                                                .getAssignmentType()
+                                                                .equals(type)
+                                                        )
+                                                        .collect(Collectors.toList())
+                                        );
+                                    }
+
+                                    // Assign or reassign the employee
+                                    var assignment = new EmployeeAssignmentDTO();
+                                    assignment.setAssignmentKey(key);
+                                    assignment.setAssignmentType(type);
+                                    assignment.setEmployee(employeeDTO);
+                                    assignment.setRequestSet(requestSet);
+                                    employeeAssignmentRepository.save(assignment);
+                                }
+                        )
                 );
     }
 
     @Override
     public void detachEmployee(Long requestSetId, Integer employeeId) {
-        requestSetRepository.findById(requestSetId)
-                .ifPresent(requestSet -> {
-                            requestSet
-                                    .getAssignments()
-                                    .removeIf(assignment -> assignment.getAssignmentKey().getEmployeeId().equals(employeeId));
-                            requestSetRepository.save(requestSet);
-                        }
-                );
+        employeeAssignmentRepository.deleteById(new EmployeeAssignmentKey(requestSetId, employeeId));
     }
 
     private void updateRequest(RequestDTO requestDTO, Request inputRequest) {
