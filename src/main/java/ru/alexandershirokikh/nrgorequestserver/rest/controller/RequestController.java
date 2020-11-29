@@ -10,6 +10,7 @@ import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Date;
@@ -81,9 +82,17 @@ public class RequestController {
     /**
      * Adds new empty request set or updates it if ID is {@literal null}
      */
-    @PostMapping
+    @PostMapping("/worksheets/")
     public RequestSet updateRequestSet(@Valid @RequestBody RequestSet newRequestSet) {
         return requestService.updateRequestSet(newRequestSet);
+    }
+
+    /**
+     * Deletes request set and all its requests by request set ID
+     */
+    @DeleteMapping("/worksheets/{id}")
+    public void deleteRequestSet(@PathVariable("id") @Positive Long worksheetId) {
+        requestService.deleteRequestSet(worksheetId);
     }
 
     /**

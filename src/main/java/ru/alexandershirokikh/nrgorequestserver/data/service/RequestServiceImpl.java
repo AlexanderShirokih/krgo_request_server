@@ -184,7 +184,6 @@ public class RequestServiceImpl implements RequestService {
         );
     }
 
-
     private Employee buildEmployee(EmployeeDTO employeeDTO) {
         if (employeeDTO == null)
             return null;
@@ -214,6 +213,13 @@ public class RequestServiceImpl implements RequestService {
         dto.setDate(updatedRequestSet.getDate());
 
         return buildShortRequestSet(requestSetRepository.save(dto));
+    }
+
+    @Override
+    public void deleteRequestSet(Long worksheet) {
+        if (requestSetRepository.existsById(worksheet)) {
+            requestSetRepository.deleteById(worksheet);
+        }
     }
 
     @Transactional

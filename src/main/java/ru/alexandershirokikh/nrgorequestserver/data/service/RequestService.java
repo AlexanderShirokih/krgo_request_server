@@ -55,6 +55,11 @@ public interface RequestService {
     RequestSet updateRequestSet(RequestSet newRequestSet);
 
     /**
+     * Deletes request set by its ID
+     */
+    void deleteRequestSet(Long worksheet);
+
+    /**
      * Moves requests to another request set
      */
     void moveRequest(Long targetId, List<Long> requests);
