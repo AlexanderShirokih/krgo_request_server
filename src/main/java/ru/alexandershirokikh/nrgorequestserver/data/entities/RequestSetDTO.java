@@ -2,7 +2,9 @@ package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -24,10 +26,14 @@ public class RequestSetDTO {
     @Column
     private Date date;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "requestSet", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RequestDTO> requests;
 
     @JsonIgnoreProperties("assignments")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToMany(mappedBy = "requestSet")
     private Set<EmployeeAssignmentDTO> assignments;
 }

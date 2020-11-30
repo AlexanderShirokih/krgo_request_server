@@ -7,7 +7,9 @@ import ru.alexandershirokikh.nrgorequestserver.data.dao.CountingPointsRepository
 import ru.alexandershirokikh.nrgorequestserver.data.entities.*;
 import ru.alexandershirokikh.nrgorequestserver.models.CountingPoint;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,16 +34,19 @@ public class CountingPointServiceImpl implements CountingPointService {
         return countingPointsRepository.findByKeyCounterNumber(number);
     }
 
+    @Transactional
     @Override
     public AccountInfoToCountingPointDTO updateCountingPoint(AccountInfoDTO owner, CountingPoint countingPoint) {
         var counterType = new CounterTypeDTO();
         counterType.setId(countingPoint.getCounterType().getId());
+        counterType.setAccuracy(countingPoint.getCounterType().getAccuracy());
+        counterType.setBits(countingPoint.getCounterType().getBits());
+        counterType.setName(countingPoint.getCounterType().getName());
+        counterType.setSinglePhased(countingPoint.getCounterType().getSinglePhased());
 
-        var existingCountingPoint = countingPointsRepository
+        Optional<CountingPointDTO> existingCountingPoint = countingPointsRepository
                 .findById(new CountingPointPK(countingPoint.getCounterNumber(), counterType.getId()));
-
-        var newCountingPoint = createDTO(countingPoint);
-
+        var newCountingPoint = createDTO(countingPoint, counterType);
         if (existingCountingPoint.isPresent()) {
             var existing = updateCountingPointIfNeeded(existingCountingPoint.get(), newCountingPoint);
             return updateAssignee(owner, existing);
@@ -66,22 +71,12 @@ public class CountingPointServiceImpl implements CountingPointService {
 
     private CountingPointDTO updateCountingPointIfNeeded(CountingPointDTO currentDTO, CountingPointDTO newDTO) {
         if (!currentDTO.equals(newDTO)) {
-            CounterTypeDTO counterType = new CounterTypeDTO();
-            counterType.setId(newDTO.getCounterType().getId());
-
-            currentDTO.setTpName(newDTO.getTpName());
-            currentDTO.setPillarNumber(newDTO.getPillarNumber());
-            currentDTO.setFeederNumber(newDTO.getFeederNumber());
-            currentDTO.setCounterType(counterType);
-            currentDTO.setCheckQuarter(newDTO.getCheckQuarter());
-            currentDTO.setCheckYear(newDTO.getCheckYear());
-            currentDTO.setPower(newDTO.getPower());
-            return countingPointsRepository.save(currentDTO);
+            return countingPointsRepository.save(newDTO);
         }
         return currentDTO;
     }
 
-    private CountingPointDTO createDTO(CountingPoint countingPoint) {
+    private CountingPointDTO createDTO(CountingPoint countingPoint, CounterTypeDTO counterTypeDTO) {
         var dto = new CountingPointDTO();
         var key = new CountingPointPK();
         key.setCounterNumber(countingPoint.getCounterNumber());
@@ -93,10 +88,7 @@ public class CountingPointServiceImpl implements CountingPointService {
         dto.setFeederNumber(countingPoint.getFeederNumber());
         dto.setPillarNumber(countingPoint.getPillarNumber());
         dto.setTpName(countingPoint.getTpName());
-
-        if (countingPoint.getCounterType() != null) {
-            dto.setCounterType(new CounterTypeDTO(countingPoint.getCounterType().getId(), null, null, null, null));
-        }
+        dto.setCounterType(counterTypeDTO);
 
         return dto;
     }

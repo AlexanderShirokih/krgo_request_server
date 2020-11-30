@@ -10,7 +10,6 @@ import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Date;
@@ -31,16 +30,16 @@ public class RequestController {
      * Adds a new entity to the database from given request
      */
     @PutMapping("/{id}")
-    public void addRequest(@PathVariable(name = "id") @Positive Long setId, @Valid @RequestBody Request inputRequest) {
-        requestService.addRequest(setId, inputRequest);
+    public Request addRequest(@PathVariable(name = "id") @Positive Long setId, @Valid @RequestBody Request inputRequest) {
+        return requestService.addRequest(setId, inputRequest);
     }
 
     /**
      * Updates an existing request
      */
     @PostMapping("/{id}")
-    public void updateRequest(@PathVariable(name = "id") @Positive Long id, @Valid @RequestBody Request inputRequest) {
-        requestService.updateRequest(id, inputRequest);
+    public void updateRequest(@PathVariable(name = "id") @Positive Long requestId, @Valid @RequestBody Request inputRequest) {
+        requestService.updateRequest(requestId, inputRequest);
     }
 
     /**

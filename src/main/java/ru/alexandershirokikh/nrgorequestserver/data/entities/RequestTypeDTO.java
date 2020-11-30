@@ -1,5 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.data.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
  * Describes request type
  */
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity(name = "request_type")
 public class RequestTypeDTO {

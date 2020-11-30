@@ -27,11 +27,11 @@ CREATE TABLE IF NOT EXISTS counter_point
     counter_type_id INT,
     counter_number  VARCHAR(24) NOT NULL,
     tp_name         VARCHAR(8)  NULL,
-    feeder_number   TINYINT(2)  NULL,
+    feeder_number   SMALLINT    NULL,
     pillar_number   VARCHAR(5)  NULL,
     power           FLOAT       NULL,
-    check_year      TINYINT(4)  NULL,
-    check_quarter   TINYINT(1)  NULL,
+    check_year      SMALLINT    NULL,
+    check_quarter   TINYINT     NULL,
     PRIMARY KEY (counter_type_id, counter_number),
     FOREIGN KEY (counter_type_id) REFERENCES counter_types (id),
     CHECK ( check_year >= 1980 AND check_year <= 2100),
@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS request
 (
     id                          INT AUTO_INCREMENT,
     request_set_id              INT         NOT NULL,
-    additional                  VARCHAR(80) NOT NULL DEFAULT '',
-    reason                      VARCHAR(64) NOT NULL DEFAULT '',
+    additional                  VARCHAR(80) NULL,
+    reason                      VARCHAR(64) NULL,
     type_id                     INT(3)      NOT NULL,
     account_id                  INT         NULL,
     account_rev                 INT         NULL,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS assignment
     worker_id      INT                              NOT NULL,
     type           ENUM ('MEMBER', 'MAIN', 'CHIEF') NOT NULL,
     PRIMARY KEY (request_set_id, worker_id),
-    FOREIGN KEY (request_set_id) REFERENCES request_set (id),
+    FOREIGN KEY (request_set_id) REFERENCES request_set (id) ON DELETE CASCADE,
     FOREIGN KEY (worker_id) REFERENCES employee (id)
 );
 

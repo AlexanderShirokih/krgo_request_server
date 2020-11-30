@@ -2,12 +2,13 @@ package ru.alexandershirokikh.nrgorequestserver.data.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.alexandershirokikh.nrgorequestserver.models.Account;
 import ru.alexandershirokikh.nrgorequestserver.data.dao.AccountInfoRepository;
 import ru.alexandershirokikh.nrgorequestserver.data.entities.AccountInfoDTO;
 import ru.alexandershirokikh.nrgorequestserver.data.entities.StreetDTO;
+import ru.alexandershirokikh.nrgorequestserver.models.Account;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -43,13 +44,7 @@ public class AccountInfoServiceImpl implements AccountInfoService {
             final var currentAccountRevision = currentAccount.getRevision();
             newAccountInfo.setRevision(currentAccountRevision);
 
-            final var currentAccountStreet = currentAccount.getStreet();
-            if (currentAccountStreet != null) {
-                newAccountInfo.getStreet().setDistrict(currentAccountStreet.getDistrict());
-                newAccountInfo.getStreet().setName(currentAccountStreet.getName());
-            }
-
-            if (!currentAccount.equals(newAccountInfo)) {
+            if (!compareAccounts(currentAccount, newAccountInfo)) {
                 newAccountInfo.setRevision(currentAccountRevision + 1);
                 return accountInfoRepository.save(newAccountInfo);
             }
@@ -61,6 +56,17 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         }
     }
 
+    private static boolean compareAccounts(AccountInfoDTO a, AccountInfoDTO b) {
+        return
+                Objects.equals(a.getRevision(), b.getRevision()) &&
+                        Objects.equals(a.getBaseId(), b.getBaseId()) &&
+                        Objects.equals(a.getApartmentNumber(), b.getApartmentNumber()) &&
+                        Objects.equals(a.getHomeNumber(), b.getHomeNumber()) &&
+                        Objects.equals(a.getName(), b.getName()) &&
+                        Objects.equals(a.getPhoneNumber(), b.getPhoneNumber()) &&
+                        Objects.equals(a.getStreet().getId(), b.getStreet().getId());
+    }
+
     private AccountInfoDTO createNewAccountInfo(Account updateRequest) {
         var accountInfo = new AccountInfoDTO();
         accountInfo.setBaseId(updateRequest.getBaseId());
@@ -69,10 +75,7 @@ public class AccountInfoServiceImpl implements AccountInfoService {
         accountInfo.setHomeNumber(updateRequest.getHomeNumber());
         accountInfo.setApartmentNumber(updateRequest.getApartmentNumber());
         accountInfo.setPhoneNumber(updateRequest.getPhoneNumber());
-
-        if (updateRequest.getStreet() != null) {
-            accountInfo.setStreet(new StreetDTO(updateRequest.getStreet().getId(), null, null));
-        }
+        accountInfo.setStreet(new StreetDTO(updateRequest.getStreet().getId(), null, null));
         return accountInfo;
     }
 

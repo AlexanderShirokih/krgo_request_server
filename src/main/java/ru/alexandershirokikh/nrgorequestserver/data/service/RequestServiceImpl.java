@@ -34,16 +34,17 @@ public class RequestServiceImpl implements RequestService {
     private final CountingPointService countingPointService;
 
     @Override
-    public void addRequest(Long setId, Request inputRequest) {
+    public Request addRequest(Long setId, Request inputRequest) {
         var set = requestSetRepository.findById(setId);
         if (set.isPresent()) {
             var setDTO = set.get();
             var requestDTO = new RequestDTO();
             requestDTO.setRequestSet(setDTO);
 
-            updateRequest(requestDTO, inputRequest);
             setDTO.getRequests().add(requestDTO);
+            return updateRequest(requestDTO, inputRequest);
         }
+        return null;
     }
 
     @Override
@@ -81,7 +82,6 @@ public class RequestServiceImpl implements RequestService {
                 .map(dto -> full ? buildRequestSet(dto) : buildShortRequestSet(dto))
                 .collect(Collectors.toList());
     }
-
 
     private RequestSet buildShortRequestSet(RequestSetDTO dto) {
         return new RequestSet(dto.getId(), dto.getName(), dto.getDate(), null, null);
@@ -273,13 +273,17 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    private void updateRequest(RequestDTO requestDTO, Request inputRequest) {
+    @Transactional
+    private Request updateRequest(RequestDTO requestDTO, Request inputRequest) {
         requestDTO.setAdditional(inputRequest.getAdditional());
         requestDTO.setReason(inputRequest.getReason());
 
-        var requestTypeDTO = new RequestTypeDTO();
-        requestTypeDTO.setId(inputRequest.getRequestType().getId());
-        requestDTO.setRequestType(requestTypeDTO);
+        var requestType = inputRequest.getRequestType();
+        requestDTO.setRequestType(new RequestTypeDTO(
+                requestType.getId(),
+                requestType.getShortName(),
+                requestType.getFullName()
+        ));
 
         var accountInfo = inputRequest.getAccountInfo();
         if (accountInfo != null) {
@@ -300,7 +304,7 @@ public class RequestServiceImpl implements RequestService {
             requestDTO.setCountingPointAssignment(null);
             requestDTO.setAccountInfo(null);
         }
-        requestRepository.save(requestDTO);
+        return buildRequest(requestRepository.save(requestDTO));
     }
 
 }

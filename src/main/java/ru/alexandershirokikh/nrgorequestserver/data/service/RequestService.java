@@ -22,7 +22,7 @@ public interface RequestService {
     /**
      * Adds new request to existing set
      */
-    void addRequest(Long setId, Request inputRequest);
+    Request addRequest(Long setId, Request inputRequest);
 
     /**
      * Returns list containing all requests
