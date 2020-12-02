@@ -92,6 +92,10 @@ public class RequestServiceImpl implements RequestService {
         return requestSetRepository.findById(id).map(this::buildRequestSet);
     }
 
+    public List<RequestSet> convertEntities(List<RequestSetDTO> requestSetDTOS) {
+        return requestSetDTOS.stream().map(this::buildRequestSet).collect(Collectors.toList());
+    }
+
     private RequestSet buildRequestSet(RequestSetDTO requestSetDTO) {
         return new RequestSet(
                 requestSetDTO.getId(),

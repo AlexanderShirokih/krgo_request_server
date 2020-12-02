@@ -48,4 +48,20 @@ public class Account {
     @Size(max = 12)
     private final String phoneNumber;
 
+    /**
+     * Combines all address parts to string
+     */
+    public String getFullAddress() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(street.getName());
+        builder.append(" д.");
+        builder.append(homeNumber);
+
+        if (apartmentNumber != null && !apartmentNumber.isBlank()) {
+            builder.append(" кв.");
+            builder.append(apartmentNumber);
+        }
+        return builder.toString();
+    }
 }

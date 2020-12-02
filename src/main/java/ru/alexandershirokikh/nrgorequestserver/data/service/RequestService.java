@@ -1,6 +1,7 @@
 package ru.alexandershirokikh.nrgorequestserver.data.service;
 
 import org.springframework.data.domain.Page;
+import ru.alexandershirokikh.nrgorequestserver.data.entities.RequestSetDTO;
 import ru.alexandershirokikh.nrgorequestserver.models.EmployeeAssignmentType;
 import ru.alexandershirokikh.nrgorequestserver.models.Request;
 import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
@@ -73,5 +74,10 @@ public interface RequestService {
      * Detaches employee from request set
      */
     void detachEmployee(Long requestSetId, Integer employeeId);
+
+    /**
+     * Converts DTOs to corresponding models
+     */
+    public List<RequestSet> convertEntities(List<RequestSetDTO> requestSetDTOS);
 
 }

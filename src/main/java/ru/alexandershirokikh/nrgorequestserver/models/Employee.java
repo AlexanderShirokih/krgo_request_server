@@ -1,6 +1,7 @@
 package ru.alexandershirokikh.nrgorequestserver.models;
 
 import lombok.Data;
+import ru.alexandershirokikh.nrgorequestserver.utils.StringUtils;
 
 import javax.validation.constraints.*;
 
@@ -45,4 +46,14 @@ public class Employee {
      * Employee work status
      */
     private final EmployeeStatus status;
+
+
+    public String getNameWithGroup() {
+        return name + " " + StringUtils.toRoman(accessGroup) + " гр.";
+    }
+
+    public String getNameWithPosition() {
+        return position.getName() + " " + name;
+    }
+
 }
