@@ -9,10 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.printing.PDFPageable;
-import ru.alexandershirokikh.nrgorequestserver.models.Account;
-import ru.alexandershirokikh.nrgorequestserver.models.Employee;
-import ru.alexandershirokikh.nrgorequestserver.models.Request;
-import ru.alexandershirokikh.nrgorequestserver.models.RequestSet;
+import ru.alexandershirokikh.nrgorequestserver.models.*;
 
 import javax.print.PrintService;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -29,7 +26,7 @@ import java.util.stream.Stream;
 /**
  * Class for exporting worksheets to PDF document
  */
-public class PdfExporter {
+public class PdfExporter implements IExporterService {
 
     private final ClassLoader loader = PdfExporter.class.getClassLoader();
     private final List<RequestSet> worksheets;
@@ -89,6 +86,7 @@ public class PdfExporter {
      *
      * @throws IOException on any creation error
      */
+    @Override
     public void export(OutputStream outputStream) throws IOException {
         PDDocument target = new PDDocument();
         PDFont font = PDType0Font.load(
@@ -100,6 +98,7 @@ public class PdfExporter {
         writeLists(target, worksheets, font);
 
         target.save(outputStream);
+        target.close();
     }
 
     private void writeOrders(PDDocument target, List<RequestSet> worksheets, PDFont font) throws IOException {
@@ -237,7 +236,7 @@ public class PdfExporter {
                 content,
                 30.0f,
                 795.0f,
-                "Приложение к распоряжению № ____________ от ${worksheet.fullDate}",
+                "Приложение к распоряжению № ____________ от " + worksheet.getFullDate(),
                 font,
                 12.0f
         );
@@ -245,7 +244,7 @@ public class PdfExporter {
                 content,
                 34.0f,
                 775.0f,
-                "Призводитель работ: ${worksheet.mainEmployee.name}",
+                "Призводитель работ: " + worksheet.requireMainEmployee().getName(),
                 font,
                 10.0f
         );
@@ -287,46 +286,16 @@ public class PdfExporter {
             int position,
             PDFont font
     ) throws IOException {
-        Account account = request.getAccountInfo();
-
-        String accountId = account == null || account.getBaseId() == null
-                ? "--"
-                : StringUtils.leftPad(String.valueOf(account.getBaseId()), 6, "0");
-
-        String name = account == null || account.getName() == null
-                ? "--"
-                : StringUtils.substring(account.getName(), 0, 31);
-
-        String address = account == null
-                ? "--"
-                : account.getFullAddress();
-
-        String reqType = request.getRequestType().getShortName();
-
-        String counterInfo = request.getCountingPoint() == null
-                ? "ПУ отсутств."
-                : StringUtils.substring(request.getCountingPoint().getCounterInfo(), 0, 36);
-
-        String connectionPoint = request.getCountingPoint() == null
-                ? ""
-                : request.getCountingPoint().getConnectionPoint();
-
-        String phone = account == null
-                ? ""
-                : account.getPhoneNumber();
-
-        String additionalInfo = request.getAdditional() == null
-                ? ""
-                : StringUtils.substring(request.getAdditional(), 0, 56);
+        var r = new PrintableRequest(request);
 
 
         writeTextAt(content, position < 10 ? 58.0f : 55.0f, 723.0f - yOffset, String.valueOf(position), font, 10.0f);
-        writeTextAt(content, 76.0f, 730.0f - yOffset, accountId, font, 10.0f);
-        writeTextAt(content, 120.0f, 730.0f - yOffset, name, font, 9.0f);
-        writeTextAt(content, 280.0f, 730.0f - yOffset, address, font, 9.0f);
-        writeTextAt(content, 480.0f, 731.0f - yOffset, reqType, font, 10.0f);
-        writeTextAt(content, 76.0f, 714.0f - yOffset, counterInfo, font, 10.0f);
-        writeTextAt(content, 280.0f, 714.0f - yOffset, String.join(" |", connectionPoint, phone, additionalInfo), font, 9.0f);
+        writeTextAt(content, 76.0f, 730.0f - yOffset, r.getAccountId(), font, 10.0f);
+        writeTextAt(content, 120.0f, 730.0f - yOffset, StringUtils.substring(r.getName(), 0, 31), font, 9.0f);
+        writeTextAt(content, 280.0f, 730.0f - yOffset, r.getName(), font, 9.0f);
+        writeTextAt(content, 480.0f, 731.0f - yOffset, r.getReqType(), font, 10.0f);
+        writeTextAt(content, 76.0f, 714.0f - yOffset, StringUtils.substring(r.getCounterInfo(), 0, 36), font, 10.0f);
+        writeTextAt(content, 280.0f, 714.0f - yOffset, StringUtils.substring(r.getAdditions(), 0, 56), font, 9.0f);
     }
 
     private void writeMultiline(PDPageContentStream content,

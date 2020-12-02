@@ -5,10 +5,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.alexandershirokikh.nrgorequestserver.data.service.ExporterService;
 
 import java.io.IOException;
@@ -60,14 +57,19 @@ public class ExporterController {
      */
     @GetMapping("xlsx")
     public ResponseEntity<Resource> buildXlsx(@RequestParam("ids") String idsList) {
-        ExporterService.SizedResource resource = exporterService.buildXlsx(decodeWorksheetIds(idsList));
-        if (resource == null) {
-            return ResponseEntity.unprocessableEntity().build();
+        try {
+            ExporterService.SizedResource resource = exporterService.buildXlsx(decodeWorksheetIds(idsList));
+            if (resource == null) {
+                return ResponseEntity.unprocessableEntity().build();
+            }
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"doc_" + String.join(",", idsList) + ".xlsx\"")
+                    .body(resource.getResource());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"doc_" + String.join(",", idsList) + ".xlsx\"")
-                .body(resource.getResource());
     }
 
     private static List<Long> decodeWorksheetIds(String idsList) {
@@ -78,4 +80,24 @@ public class ExporterController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets a list of available printer services
+     */
+    @GetMapping("print")
+    public List<String> getPrintersList() {
+        return exporterService.listPrinters();
+    }
+
+    @GetMapping("print/{printerName}")
+    public ResponseEntity<Void> printDocument(@PathVariable("printerName") String printerName,
+                                              @RequestParam("ids") String idsList,
+                                              @RequestParam(value = "noLists", defaultValue = "false", required = false) Boolean noLists) {
+        try {
+            exporterService.printWorksheets(printerName, noLists, decodeWorksheetIds(idsList));
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 }
