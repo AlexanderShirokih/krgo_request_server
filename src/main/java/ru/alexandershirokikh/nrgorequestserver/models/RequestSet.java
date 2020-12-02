@@ -1,5 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -87,6 +88,7 @@ public class RequestSet {
     /**
      * Returns a list of work types on this worksheet
      */
+    @JsonIgnore
     public Iterable<String> getWorkTypes() {
         return getRequests().stream()
                 .map(Request::getRequestType)
@@ -94,18 +96,22 @@ public class RequestSet {
                 .collect(Collectors.toSet());
     }
 
+    @JsonIgnore
     public String getDay() {
         return new SimpleDateFormat("dd").format(date);
     }
 
+    @JsonIgnore
     public String getMonth() {
         return new SimpleDateFormat("MM").format(date);
     }
 
+    @JsonIgnore
     public String getYear() {
         return new SimpleDateFormat("yyyy г.").format(date);
     }
 
+    @JsonIgnore
     public String getFullDate() {
         return new SimpleDateFormat("dd.MM.yyyy").format(date);
     }

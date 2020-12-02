@@ -1,5 +1,6 @@
 package ru.alexandershirokikh.nrgorequestserver.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.alexandershirokikh.nrgorequestserver.utils.StringUtils;
 
@@ -48,10 +49,12 @@ public class Employee {
     private final EmployeeStatus status;
 
 
+    @JsonIgnore
     public String getNameWithGroup() {
         return name + " " + StringUtils.toRoman(accessGroup) + " гр.";
     }
 
+    @JsonIgnore
     public String getNameWithPosition() {
         return position.getName() + " " + name;
     }
