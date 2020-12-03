@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN = "ADMIN";
     private static final String USER = "USER";
+    private static final String MODERATE = "MODERATE";
 
     @Autowired
     private DataSource dataSource;
@@ -41,16 +42,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/*").hasAnyRole(USER, ADMIN)
-                .antMatchers(HttpMethod.POST, "/*").hasAnyRole(USER, ADMIN)
-                .antMatchers(HttpMethod.POST, "/districts").hasRole(ADMIN)
-                .antMatchers(HttpMethod.DELETE, "/districts").hasRole(ADMIN)
-                .antMatchers(HttpMethod.POST, "/streets").hasRole(ADMIN)
-                .antMatchers(HttpMethod.DELETE, "/streets").hasRole(ADMIN)
-                .antMatchers(HttpMethod.POST, "/counters").hasRole(ADMIN)
-                .antMatchers(HttpMethod.DELETE, "/counters").hasRole(ADMIN)
-                .antMatchers(HttpMethod.POST, "/requests/types").hasRole(ADMIN)
-                .antMatchers(HttpMethod.DELETE, "/requests/types").hasRole(ADMIN)
+                .antMatchers(HttpMethod.GET, "/*").hasAnyRole(USER, MODERATE, ADMIN)
+                .antMatchers(HttpMethod.POST, "/*").hasAnyRole(USER, MODERATE, ADMIN)
+                .antMatchers(HttpMethod.POST, "/districts").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/districts").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.POST, "/streets").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/streets").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.POST, "/counters").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/counters").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.POST, "/requests/types").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/requests/types").hasAnyRole(MODERATE, ADMIN)
+                .antMatchers(HttpMethod.POST, "/users").hasRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, "/users/*").hasRole(ADMIN)
                 .anyRequest()
                 .authenticated();
     }
