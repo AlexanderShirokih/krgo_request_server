@@ -16,10 +16,10 @@ public class AuthorityDTO implements Serializable {
     @AllArgsConstructor
     public static class AuthorityPK implements Serializable {
         @Column
-        private String username;
+        public String username;
 
         @Basic
-        private String authority;
+        public String authority;
     }
 
     @EmbeddedId

@@ -27,6 +27,6 @@ public class UserDTO {
     @Column
     private Boolean enabled;
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Set<AuthorityDTO> authorities = new HashSet<>();
 }

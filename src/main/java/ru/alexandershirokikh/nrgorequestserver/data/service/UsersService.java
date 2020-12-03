@@ -43,6 +43,7 @@ public class UsersService {
             fillDTO(user, account);
 
             AuthorityDTO authorityDTO = new AuthorityDTO();
+            authorityDTO.setKey(new AuthorityDTO.AuthorityPK(user.getUsername(), account.getAuthority().getName()));
             authorityDTO.setUserAuthority(account.getAuthority());
             authorityDTO.setUser(user);
 
