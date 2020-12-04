@@ -49,8 +49,8 @@ public class UserController {
     }
 
     /**
-     * Creates new user in the database. Registrar should have ADMIN authorities.
-     * If user already its fields will be updated.
+     * Creates new users in the database. Registrar should have ADMIN authorities.
+     * If a user already exists, its fields will be updated.
      */
     @PostMapping
     public ResponseEntity<ErrorWrapper> register(@AuthenticationPrincipal Authentication registrar, @RequestBody @Valid UserAccount newUser) {
